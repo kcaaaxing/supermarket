@@ -1,0 +1,97 @@
+{%extends 'user/base.html'%}
+{% block right_content %}
+<div class="right_content clearfix">
+    <h3 class="common_title2">全部订单</h3>
+    {% for order in order_list %}
+    <ul class="order_list_th w978 clearfix">
+        <li class="col01">{{order.order_date}}</li>
+        <li class="col02">订单号：{{order.order_id}}</li>
+        {% if order.order_Pay == 1 %}
+        <li class="col02 stress">已支付</li>
+        {% else %}
+        <li class="col02 stress">未支付</li>
+        {% endif %}
+    </ul>
+    <table class="order_list_table w980">
+        <tbody>
+        <tr>
+            <td width="55%">
+                {% for item in order.orderdetail_set.all %}
+                <ul class="order_goods_list clearfix">
+                    <li class="col01"><img src="/static/{{item.order_goods.goods_picture}}"></li>
+                    <li class="col02">
+                        {{item.order_goods.goods_title}}
+                        <em><span>{{item.order_price}}</span>元/{{item.order_goods.goods_unit}}</em>
+                    </li>
+                    <li class="col03">{{item.order_count}}个</li>
+                    <li class="col04"></li>
+                </ul>
+                {% endfor %}
+            </td>
+            <td width="15%">{{order.order_total}}元</td>
+            {% if order.order_Pay == 1 %}
+            <td width="15%">已付款</td>
+            <td width="15%"><a href="#" class="oper_btn">查看物流</a></td>
+            {% else %}
+            <td width="15%">未付款</td>
+            <td width="15%"><a href="/order/pay&{{order.order_id}}/" class="oper_btn">去付款</a></td>
+            {% endif %}
+        </tr>
+        </tbody>
+    </table>
+    {% endfor %}
+    <div class="pagenation">
+        {% if order_list.has_previous %}
+        <a href="/user/user_center_order&{{order_list.previous_page_number}}/">
+            上一页
+        </a>
+        {% endif %}
+    <!--分页 ： plist 一共多少页  pageid 当前页  orderlist paginator按照两个一页，分的，页的指向对象-->
+    {% if len_page_list < 4  %}
+        {% if len_page_list == 1 %}
+            <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+        {% elif len_page_list == 2 %}
+            {% if page_id == 1 %}
+            <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+            <a href="/user/user_center_order&{{page_next}}/" >{{page_next}}</a>
+            {% else %}
+            <a href="/user/user_center_order&{{page_previous}}/" >{{page_previous}}</a>
+            <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+            {% endif %}
+        {% elif len_page_list == 3%}
+
+            {% if page_id == 1 %}
+            <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+            <a href="/user/user_center_order&{{page_next}}/" >{{page_next}}</a>
+            {% elif page_id == 2 %}
+            <a href="/user/user_center_order&{{page_previous}}/" >{{page_previous}}</a>
+            <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+            <a href="/user/user_center_order&{{page_next}}/" >{{page_next}}</a>
+            {% else %}
+            <a href="/user/user_center_order&{{page_previous}}/" >{{page_previous}}</a>
+            <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+            {% endif %}
+        {% endif %}
+    {% elif page_id < len_page_list %}
+        {% if order_list.has_previous  %}
+        <a href="/user/user_center_order&{{page_previous}}/" >{{page_previous}}</a>
+        <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+        <a href="/user/user_center_order&{{page_next}}/" >{{page_next}}</a>
+        {% else %}
+        <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+        <a href="/user/user_center_order&{{page_next}}/" >{{page_next}}</a>
+        {% endif %}
+    {% else %}
+        <a href="/user/user_center_order&{{page_previous}}/" >{{page_previous}}</a>
+        <a href="/user/user_center_order&{{page_id}}/" class="active">{{page_id}}</a>
+    {% endif %}
+
+
+        {% if order_list.has_next %}
+        <a href="/user/user_center_order&{{order_list.next_page_number}}/">下一页></a>
+        {% endif %}
+    </div>
+</div>
+
+
+{%endblock right_content %}
